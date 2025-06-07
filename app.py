@@ -8,10 +8,8 @@ st.title("🎬 Recomendador de Películas Basado en Pósters")
 
 # === Cargar CSV enriquecido ===
 @st.cache_data
-def load_data():
-    return pd.read_csv("recomendaciones_final.csv")
+df = pd.read_csv("Recomendaciones_Enriquecido_SIN_COMILLAS.csv")
 
-df = load_data()
 
 # === Lista única de títulos válidos (sin NaN) ===
 titulos_disponibles = df['title_de_query_movie_id'].dropna().unique().tolist()
