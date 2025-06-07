@@ -8,7 +8,7 @@ st.title("🎬 Recomendador de Películas Basado en Pósters")
 
 # === Cargar CSV enriquecido ===
 
-df = pd.read_csv("Recomendaciones_Enriquecido_SIN_COMILLAS.csv")
+df = pd.read_csv("Recomendaciones_Limpio.csv")
 
 
 # === Lista única de títulos válidos (sin NaN) ===
