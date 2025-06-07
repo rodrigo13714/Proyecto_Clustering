@@ -13,31 +13,36 @@ def load_data():
 
 df = load_data()
 
-# === Obtener lista única de títulos de películas de entrada ===
-titulos_unicos = df[['query_movie_id', 'title_de_query_movie_id']].drop_duplicates().sort_values('title_de_query_movie_id')
+# === Selector por título de la película elegida ===
+titulos_disponibles = df['title_de_query_movie_id'].unique()
+selected_title = st.selectbox("Selecciona una película:", sorted(titulos_disponibles))
 
-# Selector de película por título
-selected_title = st.selectbox("Selecciona una película:", titulos_unicos['title_de_query_movie_id'])
+# === Filtrar el DataFrame por el título seleccionado ===
+pelicula_df = df[df['title_de_query_movie_id'] == selected_title]
 
-# Obtener el query_movie_id correspondiente
-selected_id = titulos_unicos[titulos_unicos['title_de_query_movie_id'] == selected_title]['query_movie_id'].values[0]
-
-# === Mostrar póster y detalles de la película seleccionada ===
+# === Mostrar póster de la película seleccionada ===
 st.subheader("🎥 Película seleccionada")
-st.markdown(f"**Título:** {selected_title}")
-st.markdown(f"**Movie ID:** `{selected_id}`")
 
-poster_path = f"posters/{selected_id}.jpg"
+# Obtenemos el ID y género directamente de la primera fila
+query_id = pelicula_df['query_movie_id'].iloc[0]
+query_genre = pelicula_df['genre_de_query_movie_id'].iloc[0]
+
+st.markdown(f"**Título:** {selected_title}")
+st.markdown(f"**Género:** {query_genre}")
+st.markdown(f"**Movie ID:** `{query_id}`")
+
+poster_path = f"posters/{query_id}.jpg"
 if os.path.exists(poster_path):
     st.image(Image.open(poster_path), width=250)
 else:
     st.warning("📭 Póster de esta película no encontrado en posters/")
 
-# === Obtener recomendaciones para la película seleccionada ===
+# === Mostrar las recomendaciones ===
 st.subheader("🍿 Películas Recomendadas")
-recomendaciones = df[df['query_movie_id'] == selected_id].sort_values('position')
 
+recomendaciones = pelicula_df.sort_values("position")
 cols = st.columns(5)
+
 for idx, (_, row) in enumerate(recomendaciones.iterrows()):
     col = cols[idx % 5]
     with col:
