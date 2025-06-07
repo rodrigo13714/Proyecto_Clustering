@@ -32,7 +32,7 @@ st.markdown(f"**Título:** {selected_title}")
 st.markdown(f"**Género:** {query_genre}")
 st.markdown(f"**Movie ID:** `{query_id}`")
 
-poster_path = f"posters/{query_id}.jpg"
+poster_path = "posters/{query_id}.jpg"
 if os.path.exists(poster_path):
     st.image(Image.open(poster_path), width=250)
 else:
