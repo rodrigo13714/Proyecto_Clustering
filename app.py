@@ -14,7 +14,7 @@ def load_data():
 df = load_data()
 
 # === Obtener lista única de películas de entrada ===
-peliculas_unicas = df['query_movie_id'].drop_duplicates().sort_values().tolist()
+peliculas_unicas = df['query_movie_id']
 
 # === Selector de película por ID ===
 selected_id = st.selectbox("Selecciona una película por ID:", peliculas_unicas)
