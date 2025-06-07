@@ -13,17 +13,18 @@ def load_data():
 
 df = load_data()
 
+# === Lista única de títulos válidos (sin NaN) ===
+titulos_disponibles = df['title_de_query_movie_id'].dropna().unique().tolist()
+
 # === Selector por título de la película elegida ===
-titulos_disponibles = df['title_de_query_movie_id'].unique()
 selected_title = st.selectbox("Selecciona una película:", sorted(titulos_disponibles))
 
 # === Filtrar el DataFrame por el título seleccionado ===
 pelicula_df = df[df['title_de_query_movie_id'] == selected_title]
 
-# === Mostrar póster de la película seleccionada ===
+# === Mostrar póster y detalles de la película seleccionada ===
 st.subheader("🎥 Película seleccionada")
 
-# Obtenemos el ID y género directamente de la primera fila
 query_id = pelicula_df['query_movie_id'].iloc[0]
 query_genre = pelicula_df['genre_de_query_movie_id'].iloc[0]
 
