@@ -3,38 +3,28 @@ import pandas as pd
 import os
 from PIL import Image
 
-# Configuración de página con fondo blanco personalizado
 st.set_page_config(page_title="Recomendador Visual", layout="wide")
-st.markdown("""
-    <style>
-    body {
-        background-color: white;
-        color: black;
-    }
-    </style>
-""", unsafe_allow_html=True)
-
 st.title("🎬 Recomendador de Películas Basado en Pósters")
 
-# === Cargar CSV limpio ===
+# === Cargar CSV enriquecido ===
 @st.cache_data
 def load_data():
-    return pd.read_csv("Recomendaciones_Limpio.csv")
+    return pd.read_csv("Recomendaciones_Enriquecido.csv")
 
 df = load_data()
 
-# === Obtener lista única de títulos de películas ===
-titulos_unicos = df[['query_movie_id', 'title']].drop_duplicates().sort_values('title')
+# === Obtener lista única de títulos de películas de entrada ===
+titulos_unicos = df[['query_movie_id', 'title_de_query_movie_id']].drop_duplicates().sort_values('title_de_query_movie_id')
 
-# === Selector de película por título ===
-selected_title = st.selectbox("Selecciona una película por título:", titulos_unicos['title'])
+# Selector de película por título
+selected_title = st.selectbox("Selecciona una película:", titulos_unicos['title_de_query_movie_id'])
 
-# === Obtener el ID correspondiente al título seleccionado ===
-selected_id = titulos_unicos[titulos_unicos['title'] == selected_title]['query_movie_id'].values[0]
+# Obtener el query_movie_id correspondiente
+selected_id = titulos_unicos[titulos_unicos['title_de_query_movie_id'] == selected_title]['query_movie_id'].values[0]
 
-# === Mostrar póster de la película seleccionada ===
+# === Mostrar póster y detalles de la película seleccionada ===
 st.subheader("🎥 Película seleccionada")
-st.markdown(f"**Título:** `{selected_title}`")
+st.markdown(f"**Título:** {selected_title}")
 st.markdown(f"**Movie ID:** `{selected_id}`")
 
 poster_path = f"posters/{selected_id}.jpg"
@@ -43,7 +33,7 @@ if os.path.exists(poster_path):
 else:
     st.warning("📭 Póster de esta película no encontrado en posters/")
 
-# === Obtener recomendaciones ===
+# === Obtener recomendaciones para la película seleccionada ===
 st.subheader("🍿 Películas Recomendadas")
 recomendaciones = df[df['query_movie_id'] == selected_id].sort_values('position')
 
