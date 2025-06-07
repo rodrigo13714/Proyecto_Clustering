@@ -7,7 +7,7 @@ st.set_page_config(page_title="Recomendador Visual", layout="wide")
 st.title("🎬 Recomendador de Películas Basado en Pósters")
 
 # === Cargar CSV enriquecido ===
-@st.cache_data
+
 df = pd.read_csv("Recomendaciones_Enriquecido_SIN_COMILLAS.csv")
 
 
