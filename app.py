@@ -3,7 +3,17 @@ import pandas as pd
 import os
 from PIL import Image
 
+# Configuración de página con fondo blanco personalizado
 st.set_page_config(page_title="Recomendador Visual", layout="wide")
+st.markdown("""
+    <style>
+    body {
+        background-color: white;
+        color: black;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 st.title("🎬 Recomendador de Películas Basado en Pósters")
 
 # === Cargar CSV limpio ===
@@ -13,20 +23,25 @@ def load_data():
 
 df = load_data()
 
-# === Obtener lista única de películas de entrada ===
-peliculas_unicas = df['query_movie_id'].drop_duplicates().sort_values().tolist()
+# === Obtener lista única de títulos de películas ===
+titulos_unicos = df[['query_movie_id', 'title']].drop_duplicates().sort_values('title')
 
-# === Selector de película por ID ===
-selected_id = st.selectbox("Selecciona una película por ID:", peliculas_unicas)
+# === Selector de película por título ===
+selected_title = st.selectbox("Selecciona una película por título:", titulos_unicos['title'])
 
-# === Mostrar póster de la película seleccionada (si existe) ===
+# === Obtener el ID correspondiente al título seleccionado ===
+selected_id = titulos_unicos[titulos_unicos['title'] == selected_title]['query_movie_id'].values[0]
+
+# === Mostrar póster de la película seleccionada ===
 st.subheader("🎥 Película seleccionada")
+st.markdown(f"**Título:** `{selected_title}`")
 st.markdown(f"**Movie ID:** `{selected_id}`")
+
 poster_path = f"posters/{selected_id}.jpg"
 if os.path.exists(poster_path):
     st.image(Image.open(poster_path), width=250)
 else:
-    st.warning("📭 Póster de esta película no encontrado en posters_test/")
+    st.warning("📭 Póster de esta película no encontrado en posters/")
 
 # === Obtener recomendaciones ===
 st.subheader("🍿 Películas Recomendadas")
@@ -45,6 +60,6 @@ for idx, (_, row) in enumerate(recomendaciones.iterrows()):
             col.image(Image.open(poster_rec_path), width=120)
         else:
             col.caption("📭 Sin póster")
-        
+
         col.markdown(f"**{rec_title}**")
         col.caption(f"🎭 {rec_genre}")
