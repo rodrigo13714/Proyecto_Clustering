@@ -7,9 +7,11 @@ st.set_page_config(page_title="Recomendador Visual", layout="wide")
 st.title("🎬 Recomendador de Películas Basado en Pósters")
 
 # === Cargar CSV enriquecido ===
+@st.cache_data
+def load_data():
+    return pd.read_csv("Recomendaciones_Enriquecido.csv")
 
-df = pd.read_csv("Recomendaciones_Limpio.csv")
-
+df = load_data()
 
 # === Lista única de títulos válidos (sin NaN) ===
 titulos_disponibles = df['title_de_query_movie_id'].dropna().unique().tolist()
